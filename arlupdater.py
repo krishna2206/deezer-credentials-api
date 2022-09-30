@@ -16,8 +16,8 @@ async def update_deezer_arl(login_mail, login_password):
             login_button = await page.query_selector("button[id='login_form_submit']")
             await login_button.click(force=True)
 
-            while await page.url == DEEZER_LOGIN_URL:
-                if await page.url == "https://www.deezer.com/en/offers":
+            while page.url == DEEZER_LOGIN_URL:
+                if page.url == "https://www.deezer.com/en/offers":
                     break
         except Exception as error:
             print(f"{type(error).__name__}: {error}")

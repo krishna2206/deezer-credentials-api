@@ -35,13 +35,7 @@ async def get_page_screenshot(request: Request):
                 """
             return Response(
                 status_code=200,
-                headers={"Content-Type": "text/html"},
-                content=data)
-            """
-            return Response(
-                status_code=200,
                 content=json.dumps({"status": "success", "cookies": data}))
-            """
         return Response(
             status_code=400,
             headers={"Content-Type": "application/json"},

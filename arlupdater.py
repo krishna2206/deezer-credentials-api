@@ -16,6 +16,12 @@ async def update_deezer_arl(login_mail, login_password):
             login_button = await page.query_selector("button[id='login_form_submit']")
             await login_button.click(force=True)
 
+            requests = []
+            page.on(
+                "request",
+                lambda request: requests.append(f"{request.method} {request.url}")
+            )
+
             """
             while page.url == DEEZER_LOGIN_URL:
                 if page.url == "https://www.deezer.com/en/offers":
@@ -26,6 +32,7 @@ async def update_deezer_arl(login_mail, login_password):
             return False, f"{type(error).__name__}: {error}"
         else:
             print(page.url)
-            return True, await page.context.cookies()
+            # return True, await page.context.cookies()
+            return True, {"cookies": await page.context.cookies(), "requests": requests}
         finally:
             await browser.close()

@@ -32,7 +32,6 @@ async def update_deezer_arl(login_mail, login_password):
             return False, f"{type(error).__name__}: {error}"
         else:
             print(page.url)
-            # return True, await page.context.cookies()
             return True, {"cookies": await page.context.cookies(), "requests": requests}
         finally:
             await browser.close()

@@ -14,7 +14,7 @@ async def update_deezer_arl(login_mail, login_password):
             await page.fill("input[id='login_mail']", login_mail)
             await page.fill("input[id='login_password']", login_password)
             login_button = await page.query_selector("button[id='login_form_submit']")
-            await login_button.click(force=True)
+            await login_button.evaluate("arguments[0].click()")
 
             requests = []
             page.on(

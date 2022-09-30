@@ -1,3 +1,5 @@
+import time
+
 from playwright.async_api import async_playwright
 
 DEEZER_LOGIN_URL = "https://www.deezer.com/en/login"
@@ -16,6 +18,11 @@ async def update_deezer_arl(login_mail, login_password):
             login_button = await page.query_selector("button[id='login_form_submit']")
             await login_button.evaluate("button => button.click()")
 
+            # Wait for the page to redirects to the offers page
+            while page.url == DEEZER_LOGIN_URL:
+                print("Waiting for the page to redirects to the offers page")
+                if page.url == "https://www.deezer.com/en/offers":
+                    break
             requests = []
             page.on(
                 "request",

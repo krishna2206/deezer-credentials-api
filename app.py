@@ -27,6 +27,7 @@ async def get_page_screenshot(request: Request):
                     status_code=500,
                     headers={"Content-Type": "text/html"},
                     content=data)
+
                 """
                 return Response(
                     status_code=500,

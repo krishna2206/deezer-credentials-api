@@ -14,18 +14,23 @@ async def update_deezer_arl(login_mail, login_password):
             page = await browser.new_page()
             await page.goto(DEEZER_LOGIN_URL)
 
-            print(await page.content())
+            # print(await page.content())
             while True:
                 print("Waiting for cookie banner")
                 cookie_banner = await page.query_selector("div[data-testid='cookie-banner']")
                 if cookie_banner:
+                    print("Cookie banner found, accepting all cookies")
                     await page.locator("button[id='gdpr-btn-accept-all']").click()
                     break
-
+            
+            print("Filling login form")
             await page.fill("input[id='login_mail']", login_mail)
             await page.fill("input[id='login_password']", login_password)
+            print("Clicking on login button")
             await page.locator("button[id='login_form_submit']").click()
 
+            print("Current URL: ", await page.url)
+            print("Waiting for redirect")
             await page.wait_for_url(DEEZER_REDIRECT_URL)
 
         except Exception as error:

@@ -31,7 +31,7 @@ async def update_deezer_arl(login_mail, login_password):
 
             print("Current URL: ", page.url)
             print("Waiting for redirect")
-            await page.wait_for_url(DEEZER_REDIRECT_URL)
+            await page.wait_for_url(DEEZER_REDIRECT_URL, timeout=60000)
 
         except Exception as error:
             print(f"{type(error).__name__}: {error}")

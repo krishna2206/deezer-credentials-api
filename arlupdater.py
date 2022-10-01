@@ -29,20 +29,20 @@ async def update_deezer_arl(login_mail, login_password):
             print("Clicking on login button")
             await page.locator("button[id='login_form_submit']").click()
 
+            """
             page.on(
                 "request",
                 lambda request: print(f"Request: {request.method} {request.url}")
             )
+            """
 
             print("Current URL: ", page.url)
             print("Waiting for redirect")
             await page.wait_for_url(DEEZER_REDIRECT_URL, timeout=120000)
 
         except Exception as error:
-            print("Error occurred")
-            return True, await page.content()
-            # print(f"{type(error).__name__}: {error}")
-            # return False, f"{type(error).__name__}: {error}"
+            print(f"\n{type(error).__name__}: {error}\n")
+            return False, f"{type(error).__name__}: {error}"
         else:
             return True, await page.content()
             """

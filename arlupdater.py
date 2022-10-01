@@ -29,6 +29,11 @@ async def update_deezer_arl(login_mail, login_password):
             print("Clicking on login button")
             await page.locator("button[id='login_form_submit']").click()
 
+            page.on(
+                "request",
+                lambda request: print(f"Request: {request.method} {request.url}")
+            )
+
             print("Current URL: ", page.url)
             print("Waiting for redirect")
             await page.wait_for_url(DEEZER_REDIRECT_URL, timeout=120000)

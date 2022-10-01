@@ -14,7 +14,7 @@ async def update_deezer_arl(login_mail, login_password):
             page = await browser.new_page()
             await page.goto(DEEZER_LOGIN_URL)
 
-            print(page.content())
+            print(await page.content())
             while True:
                 print("Waiting for cookie banner")
                 cookie_banner = await page.query_selector("div[data-testid='cookie-banner']")

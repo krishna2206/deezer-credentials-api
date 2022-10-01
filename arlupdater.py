@@ -9,7 +9,7 @@ DEEZER_REDIRECT_URL = "https://www.deezer.com/en/offers"
 async def update_deezer_arl(login_mail, login_password):
     async with async_playwright() as playwright:
         try:
-            browser = await playwright.firefox.launch(headless=True)
+            browser = await playwright.chromium.launch(headless=True)
 
             page = await browser.new_page()
             await page.goto(DEEZER_LOGIN_URL)

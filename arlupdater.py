@@ -3,18 +3,20 @@ import asyncio
 from playwright.async_api import async_playwright
 
 DEEZER_LOGIN_URL = "https://www.deezer.com/en/login"
-DEEZER_REDIRECT_URL = "https://www.deezer.com/en/offers"
+#? Used only locally because Deezer is not available in Madagascar
+# DEEZER_REDIRECT_URL = "https://www.deezer.com/en/offers"
+DEEZER_REDIRECT_URL = "https://www.deezer.com/en/"
 
 
 async def update_deezer_arl(login_mail, login_password):
     async with async_playwright() as playwright:
         try:
+            #? Chromium is used because for unknown reason, Firefox doesn't work
             browser = await playwright.chromium.launch(headless=True)
 
             page = await browser.new_page()
             await page.goto(DEEZER_LOGIN_URL)
 
-            # print(await page.content())
             while True:
                 print("Waiting for cookie banner")
                 cookie_banner = await page.query_selector("div[data-testid='cookie-banner']")
@@ -29,31 +31,18 @@ async def update_deezer_arl(login_mail, login_password):
             print("Clicking on login button")
             await page.locator("button[id='login_form_submit']").click()
 
-            """
-            page.on(
-                "request",
-                lambda request: print(f"Request: {request.method} {request.url}")
-            )
-            """
-
             print("Current URL: ", page.url)
             print("Waiting for redirect")
-            await page.wait_for_url(DEEZER_REDIRECT_URL, timeout=120000)
+            await page.wait_for_url(DEEZER_REDIRECT_URL)
 
         except Exception as error:
-            print("Error occurred")
-            print("Current URL: ", page.url)
-            return True, await page.content()
-            # print(f"{type(error).__name__}: {error}")
-            # return False, f"{type(error).__name__}: {error}"
+            print(f"{type(error).__name__}: {error}")
+            return False, f"{type(error).__name__}: {error}"
         else:
-            return True, await page.content()
-            """
             cookies = await page.context.cookies()
             for cookie in cookies:
                 if cookie["name"] == "arl":
                     return True, cookie
-            """
         finally:
             await browser.close()
 

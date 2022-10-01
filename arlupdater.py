@@ -1,44 +1,46 @@
-import time
+import asyncio
 
 from playwright.async_api import async_playwright
 
 DEEZER_LOGIN_URL = "https://www.deezer.com/en/login"
+DEEZER_REDIRECT_URL = "https://www.deezer.com/en/offers"
 
 
 async def update_deezer_arl(login_mail, login_password):
     async with async_playwright() as playwright:
         try:
-            browser = await playwright.chromium.launch(headless=True)
+            browser = await playwright.firefox.launch(headless=True)
 
             page = await browser.new_page()
             await page.goto(DEEZER_LOGIN_URL)
 
+            while True:
+                cookie_banner = await page.query_selector("div[data-testid='cookie-banner']")
+                if cookie_banner:
+                    await page.locator("button[id='gdpr-btn-accept-all']").click()
+                    break
+
             await page.fill("input[id='login_mail']", login_mail)
             await page.fill("input[id='login_password']", login_password)
-            login_button = await page.query_selector("button[id='login_form_submit']")
-            await login_button.evaluate("button => button.click()")
+            await page.locator("button[id='login_form_submit']").click()
 
-            # Wait for the page to redirects to the offers page
-            while page.url == DEEZER_LOGIN_URL:
-                print("Waiting for the page to redirects to the offers page")
-                if page.url == "https://www.deezer.com/en/offers":
-                    break
-            requests = []
-            page.on(
-                "request",
-                lambda request: requests.append(f"{request.method} {request.url}")
-            )
+            await page.wait_for_url(DEEZER_REDIRECT_URL)
 
-            """
-            while page.url == DEEZER_LOGIN_URL:
-                if page.url == "https://www.deezer.com/en/offers":
-                    break
-            """
         except Exception as error:
             print(f"{type(error).__name__}: {error}")
             return False, f"{type(error).__name__}: {error}"
         else:
-            print(page.url)
-            return True, {"cookies": await page.context.cookies(), "requests": requests}
+            cookies = await page.context.cookies()
+            for cookie in cookies:
+                if cookie["name"] == "arl":
+                    return True, cookie
         finally:
             await browser.close()
+
+
+if __name__ == "__main__":
+    login_mail = input("Deezer login mail: ")
+    login_password = input("Deezer login password: ")
+    success, result = asyncio.run(update_deezer_arl(login_mail, login_password))
+    if success:
+        print(result)

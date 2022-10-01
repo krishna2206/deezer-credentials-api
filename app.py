@@ -25,15 +25,8 @@ async def get_page_screenshot(request: Request):
             if not success:
                 return Response(
                     status_code=500,
-                    headers={"Content-Type": "text/html"},
-                    content=data)
-
-                """
-                return Response(
-                    status_code=500,
                     headers={"Content-Type": "application/json"},
                     content=json.dumps({"error": f"Internal Server Error. {data}"}))
-                """
             return Response(
                 status_code=200,
                 content=json.dumps({"status": "success", "cookies": data}))

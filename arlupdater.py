@@ -43,7 +43,8 @@ async def update_deezer_arl(login_mail, login_password):
 
         except Exception as error:
             print(f"{type(error).__name__}: {error}")
-            return False, f"{type(error).__name__}: {error}"
+            return False, page.content()
+            # return False, f"{type(error).__name__}: {error}"
         else:
             cookies = await page.context.cookies()
             for cookie in cookies:

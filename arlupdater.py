@@ -3,9 +3,7 @@ import asyncio
 from playwright.async_api import async_playwright
 
 DEEZER_LOGIN_URL = "https://www.deezer.com/en/login"
-#? Used only locally because Deezer is not available in Madagascar
-# DEEZER_REDIRECT_URL = "https://www.deezer.com/en/offers"
-DEEZER_REDIRECT_URL = "https://www.deezer.com/en/"
+DEEZER_REDIRECT_URLS = ("https://www.deezer.com/en/", "https://www.deezer.com/en/offers")
 
 
 async def update_deezer_arl(login_mail, login_password):
@@ -33,7 +31,16 @@ async def update_deezer_arl(login_mail, login_password):
 
             print("Current URL: ", page.url)
             print("Waiting for redirect")
-            await page.wait_for_url(DEEZER_REDIRECT_URL)
+            for url in DEEZER_REDIRECT_URLS:
+                try:
+                    await page.wait_for_url(DEEZER_REDIRECT_URL, timeout=30000)
+                except Exception as error:
+                    print("Failed to redirect")
+                    print("Current URL: ", page.url)
+                    if url == DEEZER_REDIRECT_URLS[-1]:
+                        raise Exception(error)
+                else:
+                    break
 
         except Exception as error:
             print(f"{type(error).__name__}: {error}")
